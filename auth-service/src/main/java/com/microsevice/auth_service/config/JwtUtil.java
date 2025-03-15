@@ -3,6 +3,7 @@ package com.microsevice.auth_service.config;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.KeyGenerator;
@@ -16,17 +17,9 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    private final String SECRET_KEY;
 
-    public JwtUtil() {
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey secretKey = keyGenerator.generateKey();
-            SECRET_KEY = Base64.getUrlEncoder().encodeToString(secretKey.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    @Value("${JWT_SECRET_KEY}")
+    private String SECRET_KEY;
 
     public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
@@ -51,4 +44,14 @@ public class JwtUtil {
     private Key getKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(SECRET_KEY));
     }
+
+    public boolean validateToken(String token){
+        try{
+            Jwts.parser().setSigningKey(SECRET_KEY.getBytes()).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

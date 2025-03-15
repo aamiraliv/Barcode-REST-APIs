@@ -64,5 +64,12 @@ public class AuthController {
         return ResponseEntity.ok(email);
     }
 
+//    @PutMapping("/validate")
+//    public ResponseEntity<?> ValidteToken(@RequestHeader("Authorization") String token){
+//        if (jwtUtil.validateToken(token.replace("Bearer ", ""))){
+//            return ResponseEntity.ok("valid token");
+//        }
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid token");
+//    }
 
 }
