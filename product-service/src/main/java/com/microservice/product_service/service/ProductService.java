@@ -1,6 +1,7 @@
 package com.microservice.product_service.service;
 
 import com.microservice.product_service.dto.ProductDTO;
+import com.microservice.product_service.dto.ProductSalesUpdateRequest;
 import com.microservice.product_service.exception.ProductNotFoundException;
 import com.microservice.product_service.model.Product;
 import com.microservice.product_service.repository.ProductRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -67,6 +69,18 @@ public class ProductService {
     public List<Product> topProducts() {
         return repository.findTop10ByOrderBySalesDesc();
     }
+
+    public void updateProductSales(List<ProductSalesUpdateRequest> salesUpdateRequests) {
+        for (ProductSalesUpdateRequest request : salesUpdateRequests){
+            System.out.println("request : "+ request);
+            Product product = repository.findById(request.getProductId())
+                    .orElseThrow(()->new ProductNotFoundException("product not found"));
+            product.setSales(product.getSales()+ request.getQuantity());
+            repository.save(product);
+            System.out.println("product : "+product);
+        }
+    }
+
 
 //    public List<ProductDTO> getProductByCategory(String category) {
 //        return repository.findByCategory(category).stream().map(mapperService::convertToDTO).collect(Collectors.toList());

@@ -86,4 +86,16 @@ public class AuthService {
         }
 
     }
+
+    public Object logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("jwt",null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok("logout successfully");
+    }
 }

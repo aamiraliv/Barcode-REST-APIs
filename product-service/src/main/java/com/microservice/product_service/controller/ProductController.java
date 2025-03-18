@@ -2,6 +2,7 @@ package com.microservice.product_service.controller;
 
 
 import com.microservice.product_service.dto.ProductDTO;
+import com.microservice.product_service.dto.ProductSalesUpdateRequest;
 import com.microservice.product_service.model.Product;
 import com.microservice.product_service.service.ProductService;
 
@@ -65,5 +66,11 @@ public class ProductController {
     @GetMapping("/mostSelling")
     public ResponseEntity<List<Product>> topProducts(){
         return ResponseEntity.ok(service.topProducts());
+    }
+
+
+    @PutMapping ("/update-sales")
+    public void updateProductSales(@RequestBody List<ProductSalesUpdateRequest> salesUpdateRequests){
+        service.updateProductSales(salesUpdateRequests);
     }
 }

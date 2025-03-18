@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +55,11 @@ public class AuthController {
         return service.login(request, response);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response){
+        return ResponseEntity.ok(service.logout(response));
+    }
+
     @GetMapping("/current-user")
     public ResponseEntity<String> getCurrentUser(@CookieValue(name = "jwt", required = false) String token) {
         if (token == null) {
@@ -62,6 +68,14 @@ public class AuthController {
 
         String email = jwtUtil.extractEmail(token);
         return ResponseEntity.ok(email);
+    }
+
+    @GetMapping("/user/{email}")
+    public ResponseEntity<User> getUserDetails(@PathVariable String email){
+        User user = repository.findByEmail(email).orElseThrow(
+                ()-> new RuntimeException("user not found")
+        );
+        return ResponseEntity.ok(user);
     }
 
 //    @PutMapping("/validate")
