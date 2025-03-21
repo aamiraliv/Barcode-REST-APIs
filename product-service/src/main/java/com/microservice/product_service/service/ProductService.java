@@ -10,11 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
 @Service
 public class ProductService {
 
@@ -82,7 +79,5 @@ public class ProductService {
     }
 
 
-//    public List<ProductDTO> getProductByCategory(String category) {
-//        return repository.findByCategory(category).stream().map(mapperService::convertToDTO).collect(Collectors.toList());
-//    }
+
 }

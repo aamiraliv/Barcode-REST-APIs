@@ -1,5 +1,6 @@
 package com.microservice.product_service.exception;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,6 +15,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<String > handleProductNotFoundException(ProductNotFoundException ex){
         return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String ,String >> handleAlreadyInWishlist(AlreadyInWishlist exc){
+        Map<String ,String > response = new HashMap<>();
+        response.put("message",exc.getMessage());
+
+        return new ResponseEntity<>(response,HttpStatus.ALREADY_REPORTED);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {

@@ -1,5 +1,7 @@
 package com.microservice.product_service.service;
 
+import com.microservice.product_service.exception.AlreadyInWishlist;
+import com.microservice.product_service.model.Cart;
 import com.microservice.product_service.model.Product;
 import com.microservice.product_service.model.Wishlist;
 import com.microservice.product_service.model.WishlistItems;
@@ -10,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class WishlistService {
@@ -34,7 +35,7 @@ public class WishlistService {
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
         if (wishlistItemRepository.existsByWishlistIdAndProductId(wishlist.getId(), productId)) {
-            throw new RuntimeException("Item already in the wishlist");
+            throw new AlreadyInWishlist("item already in the wishlist");
         }
 
         WishlistItems wishlistItem = new WishlistItems();
@@ -60,4 +61,8 @@ public class WishlistService {
         return ResponseEntity.ok(response);
     }
 
+    public List<WishlistItems> getWishlistById(Long userId) {
+        Optional<Wishlist> optionalWishlist = wishlistRepository.findByUserId(userId);
+        return optionalWishlist.map(Wishlist::getWishlistItems).orElse(Collections.emptyList());
+    }
 }

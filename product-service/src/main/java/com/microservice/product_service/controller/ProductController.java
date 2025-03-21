@@ -4,8 +4,9 @@ package com.microservice.product_service.controller;
 import com.microservice.product_service.dto.ProductDTO;
 import com.microservice.product_service.dto.ProductSalesUpdateRequest;
 import com.microservice.product_service.model.Product;
-import com.microservice.product_service.service.ProductService;
 
+
+import com.microservice.product_service.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
