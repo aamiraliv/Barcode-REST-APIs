@@ -27,17 +27,7 @@ public class OrderController {
         return service.placeOrder(userId, items);
     }
 
-    @PutMapping("/{orderId}/update-status/{productId}")
-    public void updateDeliveryStatus(@PathVariable Long orderId, @PathVariable Long productId, @RequestParam String status) {
-        service.updateDeliveryStatus(orderId, productId, status);
-    }
 
-
-    @GetMapping
-    public ResponseEntity<List<OrderDTO>> getAllOrders(){
-        List<OrderDTO> orderDTOS = service.GetALlOrders();
-        return new ResponseEntity<>(orderDTOS, HttpStatus.OK);
-    }
 
     @GetMapping("/{orderId}")
     public OrderDTO getOrderById(@PathVariable Long orderId) {

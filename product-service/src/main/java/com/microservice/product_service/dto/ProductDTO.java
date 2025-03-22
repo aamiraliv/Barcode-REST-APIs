@@ -13,6 +13,15 @@ public class ProductDTO {
     private String description;
     private double price;
     private String category;
+    private String image_url;
+
+    public String getImage_url() {
+        return image_url;
+    }
+
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
+    }
 
     public Long getId() {
         return id;

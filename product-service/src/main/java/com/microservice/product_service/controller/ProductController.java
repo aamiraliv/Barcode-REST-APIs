@@ -38,21 +38,6 @@ public class ProductController {
 //        return ResponseEntity.ok(service.getProductByCategory(category));
 //    }
 
-    @PostMapping
-    public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
-        return service.createProduct(productDTO);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        return ResponseEntity.ok(service.updateProduct(id, productDTO));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        service.deleteProduct(id);
-        return ResponseEntity.noContent().build();
-    }
 
     @GetMapping("/search")
     public ResponseEntity<List<Product>> searchBy(
