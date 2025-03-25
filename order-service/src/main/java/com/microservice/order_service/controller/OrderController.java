@@ -3,6 +3,7 @@ package com.microservice.order_service.controller;
 
 import com.microservice.order_service.dto.OrderDTO;
 import com.microservice.order_service.dto.OrderItemDTO;
+import com.microservice.order_service.repository.OrderRepository;
 import com.microservice.order_service.service.OrderService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;

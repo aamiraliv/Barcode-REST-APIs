@@ -34,7 +34,11 @@ public class OrderService {
 
 
     public List<OrderDTO> GetALlOrders() {
-        return repository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+        return repository.findAll()
+                .stream()
+                .filter(item-> !item.getOrderItems().isEmpty())
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -113,5 +117,11 @@ public class OrderService {
 
         repository.save(order);
         return convertToDTO(order);
+    }
+
+    public void updateOrderStatus(Long orderId, String status) {
+        Order order = repository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setOrderStatus(status);
+        repository.save(order);
     }
 }

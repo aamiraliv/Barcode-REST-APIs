@@ -29,7 +29,7 @@ public class Product {
 
     private String image_url;
 
-    private int sales;
+    private int sales = 0;
 
     public Product(Long id, String name, String description, Double price, String category, String image_url, int sales) {
         this.id = id;

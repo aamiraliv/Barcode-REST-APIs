@@ -31,9 +31,13 @@ public class ProductService {
     }
 
     public ProductDTO createProduct(ProductDTO productDTO) {
-        Product product = mapperService.toEntity(productDTO);
-        product = repository.save(product);
-        return mapperService.convertToDTO(product);
+        try {
+            Product product = mapperService.toEntity(productDTO);
+            product = repository.save(product);
+            return mapperService.convertToDTO(product);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create product: " + e.getMessage());
+        }
     }
 
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
