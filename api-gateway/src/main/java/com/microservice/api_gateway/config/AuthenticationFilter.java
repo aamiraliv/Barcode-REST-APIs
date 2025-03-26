@@ -43,10 +43,10 @@ public class AuthenticationFilter implements WebFilter {
         }
 
         Claims claims = jwtUtil.extractClaims(jwtToken);
-        String role = claims.get("role", String.class);
+        List<String > roles = claims.get("roles", List.class);
         String path = request.getURI().getPath();
 
-        if (path.startsWith("/api/admin") && !"ADMIN".equals(role)) {
+        if (path.startsWith("/api/admin") && (roles == null || !roles.contains("ADMIN"))) {
             return forbiddenResponse(exchange);
         }
 
