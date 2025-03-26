@@ -2,19 +2,18 @@ package com.microsevice.auth_service.controller;
 
 
 import com.microsevice.auth_service.Exception.UserAlredyExistException;
-import com.microsevice.auth_service.config.JwtUtil;
 import com.microsevice.auth_service.dto.AuthRequest;
 import com.microsevice.auth_service.model.User;
 import com.microsevice.auth_service.repository.UserRepository;
 import com.microsevice.auth_service.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,12 +26,6 @@ public class AuthController {
 
     @Autowired
     private UserRepository repository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody User user) {
@@ -60,14 +53,17 @@ public class AuthController {
         return ResponseEntity.ok(service.logout(response));
     }
 
+    @PostMapping("/refresh-token")
+    public void refreshToken(HttpServletRequest request,HttpServletResponse response) throws IOException{
+        service.refreshToken(request,response);
+    }
+
     @GetMapping("/current-user")
     public ResponseEntity<String> getCurrentUser(@CookieValue(name = "jwt", required = false) String token) {
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("no token found");
         }
-
-        String email = jwtUtil.extractEmail(token);
-        return ResponseEntity.ok(email);
+        return ResponseEntity.ok(service.extractEmailFromToken(token));
     }
 
     @GetMapping("/user/{email}")

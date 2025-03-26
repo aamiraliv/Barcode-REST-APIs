@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -23,5 +25,8 @@ public class User {
     private Role role;
 
     private boolean blocked = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Token> tokens;
 }
 
