@@ -48,6 +48,16 @@ public class AuthController {
         return service.login(request, response);
     }
 
+    @PostMapping("/admin-login")
+    public ResponseEntity<?> adminLogin(@RequestBody AuthRequest request, HttpServletResponse response) {
+
+        System.out.println("received email :" + request.getEmail());
+        System.out.println("received password:" + request.getPassword());
+        return service.adminLogin(request, response);
+    }
+
+
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response){
         return ResponseEntity.ok(service.logout(response));

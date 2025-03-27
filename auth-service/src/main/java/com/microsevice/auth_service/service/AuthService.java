@@ -4,6 +4,7 @@ package com.microsevice.auth_service.service;
 import com.microsevice.auth_service.Exception.UserAlredyExistException;
 import com.microsevice.auth_service.dto.AuthRequest;
 import com.microsevice.auth_service.dto.AuthResponse;
+import com.microsevice.auth_service.model.Role;
 import com.microsevice.auth_service.model.User;
 import com.microsevice.auth_service.repository.UserRepository;
 
@@ -50,6 +51,55 @@ public class AuthService {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return repository.save(user);
+    }
+
+    public ResponseEntity<?> adminLogin(AuthRequest request, HttpServletResponse response) {
+        try {
+            if (request == null || request.getEmail() == null || request.getPassword() == null) {
+                return ResponseEntity.badRequest().body("Email and password must be provided");
+            }
+            System.out.println("Request Email: " + request.getEmail());
+
+            User user = repository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new RuntimeException("user not found"));
+
+            System.out.println("User Found: " + user.getEmail());
+
+            if (user.isBlocked()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("your account has been blocked . contact admin.");
+            }
+
+            System.out.println("Role: " + user.getRole());
+            System.out.println("Role Class: " + user.getRole().getClass().getName());
+
+            if (user.getRole() != Role.ADMIN) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Access denied: Only admins can log in.");
+            }
+
+            System.out.println("🔹 Admin Login Request Received: " + request.getEmail());
+
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
+
+            System.out.println("✅ Admin Authentication Successful for: " + request.getEmail());
+
+            String accessToken = jwtService.generateToken(user);
+            System.out.println("🔹 Generated Admin Token: " + accessToken);
+
+            String refreshToken = jwtService.generateRefreshToken(user.getEmail());
+            System.out.println("🔹 Generated Admin Refresh Token: " + refreshToken);
+
+            addCookie(response, "jwt", accessToken, 3600);
+            addCookie(response, "refreshToken", refreshToken, 86400);
+
+            return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+        } catch (Exception e) {
+            System.out.println("❌ Admin Authentication Failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid admin credentials");
+        }
     }
 
 
@@ -154,4 +204,6 @@ public class AuthService {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
+
+
 }

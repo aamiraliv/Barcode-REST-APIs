@@ -1,8 +1,10 @@
 package com.microservice.api_gateway.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
@@ -10,19 +12,29 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
+    private final AuthenticationFilter authenticationFilter;
+
+    @Autowired
+    public SecurityConfig(AuthenticationFilter authenticationFilter) {
+        this.authenticationFilter = authenticationFilter;
+    }
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/api/auth/**").permitAll()
-                        .pathMatchers("/api/admin").hasAuthority("ADMIN")
-                        .pathMatchers("/actuator").permitAll()
+                        .pathMatchers("/api/products/**").permitAll()
+                        .pathMatchers("/api/orders/**").permitAll()
+                        .pathMatchers("/actuator/**").permitAll()
+                        .pathMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyExchange().authenticated()
                 )
-                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable) // Disable default login
-                .formLogin(ServerHttpSecurity.FormLoginSpec::disable) // Disable login page redirection
-                .logout(ServerHttpSecurity.LogoutSpec::disable); // Disable logout handling
+                .addFilterAt(authenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .logout(ServerHttpSecurity.LogoutSpec::disable);
 
         return http.build();
     }
