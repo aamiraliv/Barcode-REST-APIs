@@ -29,12 +29,13 @@ public class AuthenticationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
+        String path = request.getURI().getPath();
+
         System.out.println("Gateway forwarding request: " + request.getURI());
-        System.out.println("API Gateway - Authorization Header: " + request.getHeaders().get("Authorization"));
-
         System.out.println("Headers: " + request.getHeaders());
+        System.out.println("Request Path: " + request.getURI().getPath());
 
-        if (request.getURI().getPath().startsWith("/api/auth")) {
+        if (isPublicRoute(path)) {
             return chain.filter(exchange);
         }
 
@@ -54,8 +55,7 @@ public class AuthenticationFilter implements WebFilter {
         }
 
         Claims claims = jwtUtil.extractClaims(jwtToken);
-        List<String > roles = claims.get("roles", List.class);
-        String path = request.getURI().getPath();
+        List<String> roles = claims.get("roles", List.class);
 
         System.out.println("Extracted Claims: " + claims);
         System.out.println("Extracted Role: " + roles);
@@ -75,6 +75,12 @@ public class AuthenticationFilter implements WebFilter {
 
         return chain.filter(exchange)
                 .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth));
+    }
+
+    private boolean isPublicRoute(String path) {
+        return path.startsWith("/api/auth") ||
+                path.startsWith("/api/products")||
+                path.startsWith("/api/orders");
     }
 
     private Mono<Void> unauthorizedResponse(ServerWebExchange exchange) {
