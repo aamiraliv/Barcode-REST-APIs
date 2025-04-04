@@ -1,15 +1,13 @@
 package com.microservice.order_service.model;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Table(name = "orders")
 public class Order {
     @Id
@@ -23,11 +21,11 @@ public class Order {
 
     private String orderStatus;
 
-    private LocalDateTime orderDate;  // Timestamp field
+    private LocalDateTime orderDate;
 
-    // Automatically set the timestamp before saving the order
     @PrePersist
     protected void onCreate() {
         this.orderDate = LocalDateTime.now();
     }
+
 }
